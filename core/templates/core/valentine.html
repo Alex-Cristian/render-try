@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>.</title>
+  <style>
+    body { font-family: system-ui, Arial; display:flex; min-height:100vh; align-items:center; justify-content:center; background:#fff0f6; }
+    .card { background:white; padding:28px; border-radius:18px; box-shadow:0 10px 30px rgba(0,0,0,.12); text-align:center; width:min(520px, 92vw); }
+    h1 { margin:0 0 18px; font-size:28px; }
+    .row { display:flex; gap:14px; justify-content:center; align-items:center; flex-wrap:wrap; margin-top:18px; }
+    button { border:0; padding:12px 18px; border-radius:12px; cursor:pointer; font-size:18px; }
+    #yesBtn { background:#ff4d8d; color:white; transform-origin:center; }
+    #noBtn  { background:#e9ecef; color:#111; }
+    .hint { margin-top:14px; opacity:.75; font-size:14px; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Ma ierti iubire? 💘</h1>
+
+    <div class="row">
+      <button id="yesBtn">DA 😳</button>
+      <button id="noBtn">NU 🙄</button>
+    </div>
+
+    <div class="hint" id="hint">Apasă cu încredere…</div>
+  </div>
+
+  <script>
+  let yesScale = 1;
+  let noCount = 0;
+  let overlapped = false;
+
+  const yesBtn = document.getElementById("yesBtn");
+  const noBtn  = document.getElementById("noBtn");
+  const hint   = document.getElementById("hint");
+
+  function applyScale() {
+    yesBtn.style.transform = `scale(${yesScale})`;
+  }
+
+  function goYes() {
+    window.location.href = "/yes/";
+  }
+
+  // DA normal
+  yesBtn.addEventListener("click", goYes);
+
+  // NU
+  noBtn.addEventListener("click", () => {
+    noCount++;
+
+    // creștem DA-ul la fiecare NU
+    yesScale = Math.min(yesScale + 0.2, 5);
+    applyScale();
+
+    // Mesaje (opțional)
+    const msgs = [
+      "Ești sigur/ă? 😶",
+      "Chiar NU? 🤨",
+      "Mai gândește-te… 🥺",
+      "DA-ul devine mare… 👀",
+      "Ok… înțeleg… 😤",
+      "Stai… ce caută NU acolo? 😈",
+      "Prea târziu 😌"
+    ];
+    hint.textContent = msgs[Math.min(noCount - 1, msgs.length - 1)];
+
+    // 6: mutăm NU peste DA, dar încă nu “trădează”
+    if (noCount === 6 && !overlapped) {
+      overlapped = true;
+
+      const yesRect = yesBtn.getBoundingClientRect();
+      const noRect  = noBtn.getBoundingClientRect();
+
+      const dx = yesRect.left - noRect.left;
+      const dy = yesRect.top  - noRect.top;
+
+      noBtn.style.position = "relative";
+      noBtn.style.left = dx + "px";
+      noBtn.style.top  = dy + "px";
+      noBtn.style.zIndex = "20"; // peste DA
+
+      // NU rămâne vizibil + clickabil
+      hint.textContent = "NU s-a mutat… dar încă e NU. Încă. 👀";
+      return;
+    }
+
+    // 7: acum NU devine efectiv DA (redirect)
+    if (noCount >= 7) {
+      goYes();
+    }
+  });
+
+  applyScale();
+</script>
+
+
+
+</body>
+</html>
