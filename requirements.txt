@@ -5,6 +5,8 @@ colorama==0.4.6
 cssselect2==0.8.0
 Django==5.2.7
 fonttools==4.61.1
+gunicorn==25.0.3
+packaging==26.0
 pillow==12.0.0
 psycopg2==2.9.11
 pycparser==2.23
